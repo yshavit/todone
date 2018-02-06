@@ -4,28 +4,29 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <?import java.lang.Double?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXListView?>
 <SplitPane dividerPositions="0.8720292504570384" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yuvalshavit.todone.ui.MainSceneController">
   <fx:define>
     <Double fx:id="LIST_HEIGHT" fx:value="567"/>
     <Double fx:id="LIST_WIDTH" fx:value="345"/>
   </fx:define>
   <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="100.0">
-   <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+   <JFXTabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
      <Tab closable="false" text="By day">
        <AnchorPane minHeight="0.0" minWidth="0.0">
-        <ListView fx:id="byDayList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="$LIST_HEIGHT" prefWidth="$LIST_WIDTH" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <JFXListView fx:id="byDayList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="$LIST_HEIGHT" prefWidth="$LIST_WIDTH" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
        </AnchorPane>
      </Tab>
      <Tab text="By Tag">
        <AnchorPane minHeight="0.0" minWidth="0.0">
-        <ListView fx:id="byTagList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="$LIST_HEIGHT" prefWidth="$LIST_WIDTH" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <JFXListView fx:id="byTagList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="$LIST_HEIGHT" prefWidth="$LIST_WIDTH" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
        </AnchorPane>
      </Tab>
-   </TabPane>
+   </JFXTabPane>
   </AnchorPane>
   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
     <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Todo" />

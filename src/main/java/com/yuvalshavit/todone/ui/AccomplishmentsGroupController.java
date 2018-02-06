@@ -1,11 +1,7 @@
 package com.yuvalshavit.todone.ui;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Comparator;
-import java.util.ResourceBundle;
-
-import javax.inject.Inject;
 
 import com.yuvalshavit.todone.data.Accomplishment;
 
@@ -13,27 +9,15 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
-import javafx.util.Callback;
 
 public class AccomplishmentsGroupController {
-  public static final Callback<ListView<AccomplishmentsGroupController>, ListCell<AccomplishmentsGroupController>> renderer = param -> new ListCell<AccomplishmentsGroupController>() {
-    @Override
-    protected void updateItem(AccomplishmentsGroupController item, boolean empty) {
-      if (empty) {
-        setGraphic(null);
-      } else {
-        setGraphic(item.top);
-      }
-    }
-  };
+  public static final ControllerUtil.Renderer<AccomplishmentsGroupController> renderer = ControllerUtil.rendererFor(t -> t.top);
   @FXML protected Pane top;
-  @FXML protected Label header = new Label();
-  @FXML protected ListView<Accomplishment> accomplishments = new ListView<>();
+  @FXML protected Label header;
+  @FXML protected ListView<AccomplishmentController> accomplishments;
 
   public static Comparator<AccomplishmentsGroupController> biggestFirst = (a, b) -> Integer.compare(b.accomplishments.getItems().size(), a.accomplishments.getItems().size());
 
@@ -44,7 +28,8 @@ public class AccomplishmentsGroupController {
       top = fxmlLoader.load();
       DoubleProperty fixedCellSizeProperty = accomplishments.fixedCellSizeProperty();
       fixedCellSizeProperty.setValue(40);
-      accomplishments.prefHeightProperty().bind(Bindings.size(accomplishments.getItems()).multiply(fixedCellSizeProperty));
+      accomplishments.prefHeightProperty().bind(Bindings.size(accomplishments.getItems()).multiply(fixedCellSizeProperty).add(2));
+      accomplishments.setCellFactory(AccomplishmentController.renderer);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -55,7 +40,7 @@ public class AccomplishmentsGroupController {
   }
 
   public void addAccomplishment(Accomplishment accomplishment) {
-    accomplishments.getItems().add(accomplishment);
+    accomplishments.getItems().add(new AccomplishmentController(accomplishment));
   }
 
   @Override
