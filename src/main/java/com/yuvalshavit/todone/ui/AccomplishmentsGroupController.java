@@ -22,17 +22,16 @@ public class AccomplishmentsGroupController {
   public static final ControllerUtil.Renderer<AccomplishmentsGroupController> renderer = ControllerUtil.rendererFor(t -> t.top);
   @FXML protected Pane top;
   @FXML protected Label header;
-  @FXML protected VBox accomplishments; //maybe a VBox? with TextViews and possibly autosize?
+  @FXML protected ListView<AccomplishmentController> accomplishments; //maybe a VBox? with TextViews and possibly autosize?
 
-  private int size; // TODO replace with a list
-
-  public static Comparator<AccomplishmentsGroupController> biggestFirst = (a, b) -> Integer.compare(b.size, a.size);
+  public static Comparator<AccomplishmentsGroupController> biggestFirst = (a, b) -> Integer.compare(b.accomplishmentsCount(), a.accomplishmentsCount());
 
   public AccomplishmentsGroupController() {
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("accomplishment_group.fxml"));
       fxmlLoader.setController(this);
       top = fxmlLoader.load();
+      accomplishments.setCellFactory(AccomplishmentController.renderer);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -43,20 +42,16 @@ public class AccomplishmentsGroupController {
   }
 
   public void addAccomplishment(Accomplishment accomplishment) {
-    ++size;
-    AccomplishmentController ac = new AccomplishmentController(accomplishment);
-    ac.top.autosize();
-    accomplishments.getChildren().add(ac.top);
-    top.autosize();
+    accomplishments.getItems().add(new AccomplishmentController(accomplishment));
   }
 
   public int accomplishmentsCount() {
-    return size;
+    return accomplishments.getItems().size();
   }
 
   @Override
   public String toString() {
-    int n = size;
+    int n = accomplishmentsCount();
     return String.format("%s: %d accomplishment%s", header, n, n == 1 ? "" : "s");
   }
 }
