@@ -2,12 +2,12 @@
 
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
-<?import javafx.scene.web.WebView?>
+<?import javafx.scene.text.TextFlow?>
 
-<VBox fx:id="top" prefHeight="200.0" prefWidth="100.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="top" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <Text fx:id="timestamp" strokeType="OUTSIDE" strokeWidth="0.0" />
-    <WebView fx:id="text" minHeight="30.0" minWidth="150.0" />
-    <Text fx:id="tags" />
+    <Text fx:id="timestamp" strokeType="OUTSIDE" strokeWidth="0.0" text="timestamp" textAlignment="RIGHT" wrappingWidth="150" />
+    <TextFlow fx:id="text" minHeight="30.0" minWidth="150.0" />
+    <Text fx:id="tags" text="tags" />
   </children>
 </VBox>

@@ -6,30 +6,33 @@ import java.util.Comparator;
 import com.yuvalshavit.todone.data.Accomplishment;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
 public class AccomplishmentsGroupController {
   public static final ControllerUtil.Renderer<AccomplishmentsGroupController> renderer = ControllerUtil.rendererFor(t -> t.top);
   @FXML protected Pane top;
   @FXML protected Label header;
-  @FXML protected ListView<AccomplishmentController> accomplishments;
+  @FXML protected VBox accomplishments; //maybe a VBox? with TextViews and possibly autosize?
 
-  public static Comparator<AccomplishmentsGroupController> biggestFirst = (a, b) -> Integer.compare(b.accomplishments.getItems().size(), a.accomplishments.getItems().size());
+  private int size; // TODO replace with a list
+
+  public static Comparator<AccomplishmentsGroupController> biggestFirst = (a, b) -> Integer.compare(b.size, a.size);
 
   public AccomplishmentsGroupController() {
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("accomplishment_group.fxml"));
       fxmlLoader.setController(this);
       top = fxmlLoader.load();
-      DoubleProperty fixedCellSizeProperty = accomplishments.fixedCellSizeProperty();
-      fixedCellSizeProperty.setValue(40);
-      accomplishments.prefHeightProperty().bind(Bindings.size(accomplishments.getItems()).multiply(fixedCellSizeProperty).add(2));
-      accomplishments.setCellFactory(AccomplishmentController.renderer);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -40,12 +43,20 @@ public class AccomplishmentsGroupController {
   }
 
   public void addAccomplishment(Accomplishment accomplishment) {
-    accomplishments.getItems().add(new AccomplishmentController(accomplishment));
+    ++size;
+    AccomplishmentController ac = new AccomplishmentController(accomplishment);
+    ac.top.autosize();
+    accomplishments.getChildren().add(ac.top);
+    top.autosize();
+  }
+
+  public int accomplishmentsCount() {
+    return size;
   }
 
   @Override
   public String toString() {
-    int n = accomplishments.getItems().size();
+    int n = size;
     return String.format("%s: %d accomplishment%s", header, n, n == 1 ? "" : "s");
   }
 }

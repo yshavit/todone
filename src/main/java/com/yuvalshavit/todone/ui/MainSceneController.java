@@ -49,7 +49,7 @@ public class MainSceneController implements Initializable {
     tagGroups.sort(AccomplishmentsGroupController.biggestFirst);
     for (AccomplishmentsGroupController group : tagGroups) {
       String header = group.header.getText();
-      int n = group.accomplishments.getItems().size();
+      int n = group.accomplishmentsCount();
       header = String.format("%s (%d accomplishment%s)", header, n, n == 1 ? "" : "s");
       group.header.setText(header);
     }
