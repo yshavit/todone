@@ -2,6 +2,7 @@ package com.yuvalshavit.todone.ui;
 
 import java.util.function.Function;
 
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
@@ -11,15 +12,17 @@ public class ControllerUtil {
   private ControllerUtil() {}
 
   public static <T> Renderer<T> rendererFor(Function<T, Pane> getTop) {
-    return list -> new ListCell<T>() {
-      @Override
-      protected void updateItem(T item, boolean empty) {
-        if (empty) {
-          setGraphic(null);
+    return list -> {
+      ListCell<T> cell = new ListCell<>();
+      cell.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+      cell.itemProperty().addListener(((observable, oldValue, newValue) -> {
+        if (newValue == null) {
+          cell.setGraphic(null);
         } else {
-          setGraphic(getTop.apply(item));
+          cell.setGraphic(getTop.apply(newValue));
         }
-      }
+      }));
+      return cell;
     };
   }
 

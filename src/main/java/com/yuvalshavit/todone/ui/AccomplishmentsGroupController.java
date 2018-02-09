@@ -5,24 +5,17 @@ import java.util.Comparator;
 
 import com.yuvalshavit.todone.data.Accomplishment;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 
 public class AccomplishmentsGroupController {
   public static final ControllerUtil.Renderer<AccomplishmentsGroupController> renderer = ControllerUtil.rendererFor(t -> t.top);
   @FXML protected Pane top;
   @FXML protected Label header;
-  @FXML protected ListView<AccomplishmentController> accomplishments; //maybe a VBox? with TextViews and possibly autosize?
+  @FXML protected ListView<AccomplishmentController> accomplishments;
 
   public static Comparator<AccomplishmentsGroupController> biggestFirst = (a, b) -> Integer.compare(b.accomplishmentsCount(), a.accomplishmentsCount());
 

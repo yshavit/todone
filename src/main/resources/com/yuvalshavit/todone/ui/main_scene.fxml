@@ -17,14 +17,10 @@
   <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="100.0">
    <JFXTabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
      <Tab closable="false" text="By day">
-       <AnchorPane minHeight="0.0" minWidth="0.0">
-        <JFXListView fx:id="byDayList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="$LIST_HEIGHT" prefWidth="$LIST_WIDTH" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-       </AnchorPane>
+        <JFXListView fx:id="byDayList" minHeight="-Infinity" minWidth="-Infinity" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="$LIST_HEIGHT" prefWidth="$LIST_WIDTH" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
      </Tab>
      <Tab text="By Tag">
-       <AnchorPane minHeight="0.0" minWidth="0.0">
-        <JFXListView fx:id="byTagList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="$LIST_HEIGHT" prefWidth="$LIST_WIDTH" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-       </AnchorPane>
+        <JFXListView fx:id="byTagList" minHeight="-Infinity" minWidth="-Infinity" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="$LIST_HEIGHT" prefWidth="$LIST_WIDTH" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
      </Tab>
    </JFXTabPane>
   </AnchorPane>

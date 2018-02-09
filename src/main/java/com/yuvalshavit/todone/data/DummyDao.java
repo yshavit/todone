@@ -6,6 +6,9 @@ import java.util.NavigableSet;
 import java.util.Random;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.primitives.Ints;
 
 public class DummyDao implements TodoneDao {
   private final NavigableSet<Accomplishment> accomplishments = new ConcurrentSkipListSet<>();
@@ -24,8 +27,10 @@ public class DummyDao implements TodoneDao {
       "design meeting for #featureA",
       "groomed #spec for #featureA",
       "had a #featureA pitching meeting");
+    int minTimeMillis = Ints.checkedCast(TimeUnit.HOURS.toMillis(2));
+    int maxTimeMillis = Ints.checkedCast(TimeUnit.HOURS.toMillis(36));
     for (String text : texts) {
-      now -= random.nextInt(172_800_000 - 7_200_000) + 7_200_000 ; // between 2 hours and 2 days
+      now -= random.nextInt(maxTimeMillis - minTimeMillis) + minTimeMillis ; // between 2 hours and 2 days
       dao.add(new Accomplishment(now, text));
     }
     return dao;

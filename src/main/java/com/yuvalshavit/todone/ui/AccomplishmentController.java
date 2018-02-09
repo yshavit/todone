@@ -8,7 +8,6 @@ import java.time.format.FormatStyle;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.google.common.base.Joiner;
 import com.yuvalshavit.todone.data.Accomplishment;
 import com.yuvalshavit.todone.data.Tagger;
 
@@ -28,7 +27,7 @@ public class AccomplishmentController {
   @FXML protected Pane top;
   @FXML protected TextFlow text;
   @FXML protected Text timestamp;
-  @FXML protected Text tags;
+  @FXML protected TextFlow tags;
 
   public AccomplishmentController(Accomplishment accomplishment) {
     try {
@@ -49,7 +48,8 @@ public class AccomplishmentController {
           tagsSet.add(tag);
         }
       );
-      tags.setText(Joiner.on(", ").join(tagsSet));
+      ObservableList<Node> tagNodes = tags.getChildren();
+      tagsSet.forEach(tag -> tagNodes.add(new Text("#" + tag)));
 
       timestamp.setText(formatter.format(Instant.ofEpochMilli(accomplishment.getTimestamp()).atZone(ZoneId.systemDefault()).toLocalDateTime()));
     } catch (IOException e) {

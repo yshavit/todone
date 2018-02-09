@@ -5,9 +5,7 @@
 <?import javafx.scene.text.TextFlow?>
 
 <VBox fx:id="top" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
-  <children>
-    <Text fx:id="timestamp" strokeType="OUTSIDE" strokeWidth="0.0" text="timestamp" textAlignment="RIGHT" wrappingWidth="150" />
-    <TextFlow fx:id="text" minHeight="30.0" minWidth="150.0" />
-    <Text fx:id="tags" text="tags" />
-  </children>
+  <Text fx:id="timestamp" strokeType="OUTSIDE" strokeWidth="0.0" text="timestamp" textAlignment="RIGHT" wrappingWidth="150" />
+  <TextFlow fx:id="text" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" />
+  <TextFlow fx:id="tags" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" />
 </VBox>
