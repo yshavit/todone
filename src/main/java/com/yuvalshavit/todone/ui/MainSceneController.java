@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 
@@ -22,19 +23,29 @@ import com.yuvalshavit.todone.data.TodoneDao;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.util.StringConverter;
 
 public class MainSceneController implements Initializable {
   private final LocalDate today = LocalDate.now();
 
   @FXML private ListView<AccomplishmentsGroupController> byDayList;
   @FXML private ListView<AccomplishmentsGroupController> byTagList;
+  @FXML protected LineChart<Long,Integer> tagsChart;
+  @FXML protected NumberAxis tagsChartX;
+  @FXML protected NumberAxis tagsChartY;
   @Inject protected ZoneId zoneId;
   @Inject protected TodoneDao dao;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    Map<LocalDate,AccomplishmentsGroupController> byDayGroups = new TreeMap<>(Comparator.reverseOrder());
+    NavigableMap<LocalDate,AccomplishmentsGroupController> byDayGroups = new TreeMap<>(Comparator.reverseOrder());
     Map<String,AccomplishmentsGroupController> byTagGroups = new HashMap<>();
     for (Accomplishment accomplishment : dao.fetchAll()) {
       Instant instant = Instant.ofEpochMilli(accomplishment.getTimestamp());
@@ -44,6 +55,38 @@ public class MainSceneController implements Initializable {
         byTagGroups.computeIfAbsent(tag, this::createGroupForTag).addAccomplishment(accomplishment);
       }
     }
+    byDayList.getItems().addAll(byDayGroups.values());
+    XYChart.Series<Long,Integer> tagsChartSeries = new XYChart.Series<>(); TODO one series per tag
+    byDayGroups.descendingMap().forEach((date, group) -> {
+      XYChart.Data<Long, Integer> dataPoint = new XYChart.Data<>(date.toEpochDay(), group.accomplishmentsCount());
+      Label hoverLabel = new Label(String.valueOf(group.accomplishmentsCount()));
+
+      StackPane hoverPane = new StackPane();
+      hoverPane.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
+        hoverPane.getChildren().add(hoverLabel);
+      });
+      hoverPane.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
+        hoverPane.getChildren().clear();
+      });
+      dataPoint.setNode(hoverPane);
+      tagsChartSeries.getData().add(dataPoint);
+    });
+    tagsChartX.setTickLabelFormatter(new StringConverter<Number>() {
+      final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
+      @Override
+      public String toString(Number object) {
+        return formatter.format(LocalDate.ofEpochDay(object.longValue()));
+      }
+
+      @Override
+      public Number fromString(String string) {
+        return LocalDate.from(formatter.parse(string)).toEpochDay();
+      }
+    });
+    tagsChartX.setAutoRanging(false);
+    tagsChartX.setLowerBound(byDayGroups.lastKey().toEpochDay() - 2);
+    tagsChartX.setUpperBound(LocalDate.now().toEpochDay() + 2);
+    tagsChart.getData().add(tagsChartSeries);
     byDayList.getItems().addAll(byDayGroups.values());
     List<AccomplishmentsGroupController> tagGroups = new ArrayList<>(byTagGroups.values());
     tagGroups.sort(AccomplishmentsGroupController.biggestFirst);
