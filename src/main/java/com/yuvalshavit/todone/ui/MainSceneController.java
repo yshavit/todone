@@ -33,6 +33,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.StringConverter;
 
 public class MainSceneController implements Initializable {
+  private static final int TAG_CHART_BUFFER = 1;
   private final LocalDate today = LocalDate.now();
 
   @FXML private ListView<AccomplishmentsGroupController> byDayList;
@@ -56,7 +57,7 @@ public class MainSceneController implements Initializable {
       }
     }
     byDayList.getItems().addAll(byDayGroups.values());
-    XYChart.Series<Long,Integer> tagsChartSeries = new XYChart.Series<>(); TODO one series per tag
+    XYChart.Series<Long,Integer> tagsChartSeries = new XYChart.Series<>();// TODO one series per tag
     byDayGroups.descendingMap().forEach((date, group) -> {
       XYChart.Data<Long, Integer> dataPoint = new XYChart.Data<>(date.toEpochDay(), group.accomplishmentsCount());
       Label hoverLabel = new Label(String.valueOf(group.accomplishmentsCount()));
@@ -84,8 +85,8 @@ public class MainSceneController implements Initializable {
       }
     });
     tagsChartX.setAutoRanging(false);
-    tagsChartX.setLowerBound(byDayGroups.lastKey().toEpochDay() - 2);
-    tagsChartX.setUpperBound(LocalDate.now().toEpochDay() + 2);
+    tagsChartX.setLowerBound(byDayGroups.lastKey().toEpochDay() - TAG_CHART_BUFFER);
+    tagsChartX.setUpperBound(LocalDate.now().toEpochDay() + TAG_CHART_BUFFER);
     tagsChart.getData().add(tagsChartSeries);
     byDayList.getItems().addAll(byDayGroups.values());
     List<AccomplishmentsGroupController> tagGroups = new ArrayList<>(byTagGroups.values());
