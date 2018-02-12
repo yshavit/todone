@@ -25,9 +25,9 @@ public class Main extends Application {
     context.init();
     fxmlLoader.setLocation(getClass().getResource("main_scene.fxml"));
     Parent root = fxmlLoader.load();
-
     primaryStage.setTitle("ToDone");
     primaryStage.setScene(new Scene(root, 600, 700));
+    root.getStylesheets().add(getClass().getResource("main.css").toExternalForm());
     primaryStage.show();
   }
 

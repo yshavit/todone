@@ -15,7 +15,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -27,7 +32,7 @@ public class AccomplishmentController {
   @FXML protected Pane top;
   @FXML protected TextFlow text;
   @FXML protected Text timestamp;
-  @FXML protected TextFlow tags;
+  @FXML protected FlowPane tags;
 
   public AccomplishmentController(Accomplishment accomplishment) {
     try {
@@ -49,7 +54,7 @@ public class AccomplishmentController {
         }
       );
       ObservableList<Node> tagNodes = tags.getChildren();
-      tagsSet.forEach(tag -> tagNodes.add(new Text("#" + tag)));
+      tagsSet.forEach(tag -> tagNodes.add(new Pane(new Label("#" + tag))));
 
       timestamp.setText(formatter.format(Instant.ofEpochMilli(accomplishment.getTimestamp()).atZone(ZoneId.systemDefault()).toLocalDateTime()));
     } catch (IOException e) {
