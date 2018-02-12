@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.ToLongFunction;
 
@@ -23,6 +24,7 @@ import com.yuvalshavit.todone.data.TodoneDao;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ListView;
@@ -50,6 +52,7 @@ public class MainSceneController implements Initializable {
   @FXML private XYChart<Long,Integer> tagsChart;
   @FXML private NumberAxis tagsChartX;
   @FXML private NumberAxis tagsChartY;
+  @FXML private Parent mainTop;
   @Inject protected ZoneId zoneId;
   @Inject protected TodoneDao dao;
 
@@ -73,11 +76,37 @@ public class MainSceneController implements Initializable {
     tagsChartX.setLowerBound(todayEpoch - TAG_CHART_BUFFER);
     tagsChartX.setUpperBound(todayEpoch + TAG_CHART_BUFFER);
     tagsChartX.setTickLabelFormatter(EPOCH_DAY_TICK_FORMATTER);
-    tagsChartY.setAutoRanging(false);
+    tagsChartY.setTickUnit(2);
+    tagsChartY.setForceZeroInRange(true);
     tagsChartY.setLowerBound(0);
     tagsChartY.setUpperBound(1);
 
+    mainTop.addEventHandler(TagEvents.TAG_ENTER, this::handleTagEvent);
+    mainTop.addEventHandler(TagEvents.TAG_EXIT, this::handleTagEvent);
+
     dao.fetchAll().forEach(this::addAccomplishment);
+  }
+
+  private void handleTagEvent(TagEvents.TagEvent event) {
+    final String chartAreaDimmedClass = "chart-dimmed";
+    final String chartLineHighlightedClass = "chart-highlighted-line";
+    chartByTag.forEach((tag, series) -> {
+      ObservableList<String> fillStyles = series.getNode().lookup(".chart-series-area-fill").getStyleClass();
+      ObservableList<String> lineStyles = series.getNode().lookup(".chart-series-area-line").getStyleClass();
+      if (event.getEventType() == TagEvents.TAG_EXIT) {
+        fillStyles.remove(chartAreaDimmedClass);
+        lineStyles.remove(chartAreaDimmedClass);
+        lineStyles.remove(chartLineHighlightedClass);
+      } else if (Objects.equals(tag, event.tag)) {
+        fillStyles.remove(chartAreaDimmedClass);
+        lineStyles.remove(chartAreaDimmedClass);
+        lineStyles.add(chartLineHighlightedClass);
+      } else {
+        fillStyles.add(chartAreaDimmedClass);
+        lineStyles.add(chartAreaDimmedClass);
+        lineStyles.remove(chartLineHighlightedClass);
+      }
+    });
   }
 
   private void setChartRange(long epochDay) {
@@ -137,9 +166,10 @@ public class MainSceneController implements Initializable {
         seriesData.add(insertionPoint, dataPoint);
       }
       int newY = 1 + dataPoint.getYValue();
+      double newChartHeight = newY + 1.5;
       dataPoint.setYValue(newY);
-      if (newY > tagsChartY.getUpperBound()) {
-        tagsChartY.setUpperBound(newY);
+      if (newChartHeight > tagsChartY.getUpperBound()) {
+        tagsChartY.setUpperBound(newChartHeight);
       }
     }
 

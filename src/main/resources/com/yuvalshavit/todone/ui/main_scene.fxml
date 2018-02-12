@@ -8,7 +8,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.AnchorPane?>
-<SplitPane dividerPositions="0.8720292504570384" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yuvalshavit.todone.ui.MainSceneController">
+<SplitPane fx:id="mainTop" dividerPositions="0.8720292504570384" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yuvalshavit.todone.ui.MainSceneController">
   <fx:define>
     <Double fx:id="LIST_HEIGHT" fx:value="567"/>
     <Double fx:id="LIST_WIDTH" fx:value="345"/>

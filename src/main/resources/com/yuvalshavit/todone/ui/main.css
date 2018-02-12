@@ -9,3 +9,11 @@
   -fx-font-weight: bolder;
   -fx-fill: #333333;
 }
+
+.chart-highlighted-line {
+  -fx-stroke-width: 3px;
+}
+
+.chart-dimmed {
+  -fx-opacity: 20%;
+}

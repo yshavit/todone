@@ -40,9 +40,10 @@ public class AccomplishmentController {
         accomplishment.getText(),
         plainText -> textSegments.add(new Text(plainText)),
         tag -> {
-          Text text = new Text("#" + tag);
-          text.getStyleClass().add("tag");
-          textSegments.add(text);
+          Text segment = new Text("#" + tag);
+          segment.getStyleClass().add("tag");
+          TagEvents.fireOnEnterAndExit(segment, tag);
+          textSegments.add(segment);
         }
       );
 
