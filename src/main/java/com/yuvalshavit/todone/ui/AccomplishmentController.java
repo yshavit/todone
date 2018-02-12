@@ -16,11 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -32,7 +28,6 @@ public class AccomplishmentController {
   @FXML protected Pane top;
   @FXML protected TextFlow text;
   @FXML protected Text timestamp;
-  @FXML protected FlowPane tags;
 
   public AccomplishmentController(Accomplishment accomplishment) {
     try {
@@ -40,21 +35,16 @@ public class AccomplishmentController {
       fxmlLoader.setController(this);
       top = fxmlLoader.load();
 
-      Set<String> tagsSet = new TreeSet<>();
-
       ObservableList<Node> textSegments = text.getChildren();
       Tagger.escapeAndTag(
         accomplishment.getText(),
         plainText -> textSegments.add(new Text(plainText)),
         tag -> {
-          Text segment = new Text("#" + tag);
-          segment.setUnderline(true);
-          textSegments.add(segment); // TODO better styling
-          tagsSet.add(tag);
+          Text text = new Text("#" + tag);
+          text.getStyleClass().add("tag");
+          textSegments.add(text);
         }
       );
-      ObservableList<Node> tagNodes = tags.getChildren();
-      tagsSet.forEach(tag -> tagNodes.add(new Pane(new Label("#" + tag))));
 
       timestamp.setText(formatter.format(Instant.ofEpochMilli(accomplishment.getTimestamp()).atZone(ZoneId.systemDefault()).toLocalDateTime()));
     } catch (IOException e) {

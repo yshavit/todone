@@ -4,15 +4,8 @@
   -fx-text-fill: #ffffff;
 }
 
-.tags-flow > Pane {
-  -fx-padding: 2;
-}
-
-.tags-flow Label {
-  -fx-font-size: 80%;
-  -fx-background-color: #d7e3e5;
-  -fx-border-radius: 5;
-  -fx-background-radius: 5;
-  -fx-padding: 2;
-  -fx-margin-left: 2;
+.tag {
+  -fx-font-style: italic;
+  -fx-font-weight: bolder;
+  -fx-fill: #333333;
 }
