@@ -7,7 +7,6 @@ import javax.inject.Inject;
 
 import com.gluonhq.ignite.guice.GuiceContext;
 import com.google.inject.AbstractModule;
-import com.yuvalshavit.todone.data.DummyDao;
 import com.yuvalshavit.todone.data.FileBasedDao;
 import com.yuvalshavit.todone.data.TodoneDao;
 

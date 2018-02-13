@@ -11,8 +11,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.NavigableSet;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.harawata.appdirs.AppDirs;
 import net.harawata.appdirs.AppDirsFactory;
@@ -38,7 +38,7 @@ public class FileBasedDao implements TodoneDao {
   }
 
   @Override
-  public void add(Accomplishment accomplishment) throws IOException {
+  public void add(Accomplishment accomplishment) {
     try (FileOutputStream fos = new FileOutputStream(file, true);
          Writer writer = new OutputStreamWriter(fos, CHARSET))
     {
@@ -47,12 +47,14 @@ public class FileBasedDao implements TodoneDao {
         .append(' ')
         .append(escape(accomplishment.getText()))
         .append(nl);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 
   @Override
-  public NavigableSet<Accomplishment> fetchAll() throws IOException {
-    NavigableSet<Accomplishment> accomplishments = new TreeSet<>();
+  public Iterable<Accomplishment> fetchAll() {
+    List<Accomplishment> accomplishments = new ArrayList<>();
     try (FileInputStream fis = new FileInputStream(file);
          Reader reader = new InputStreamReader(fis, CHARSET);
          BufferedReader lineReader = new BufferedReader(reader))
@@ -72,6 +74,8 @@ public class FileBasedDao implements TodoneDao {
           accomplishments.add(new Accomplishment(epochSeconds * 1000, unEscape(splits[1])));
         }
       });
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
     return accomplishments;
   }
@@ -84,7 +88,7 @@ public class FileBasedDao implements TodoneDao {
     return escaped; // TODO lossy, but whatever
   }
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
     DummyDao source = DummyDao.prePopulated();
     FileBasedDao destination = new FileBasedDao();
     for (Accomplishment accomplishment : source.fetchAll()) {
