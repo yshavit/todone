@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import com.gluonhq.ignite.guice.GuiceContext;
 import com.google.inject.AbstractModule;
 import com.yuvalshavit.todone.data.DummyDao;
+import com.yuvalshavit.todone.data.FileBasedDao;
 import com.yuvalshavit.todone.data.TodoneDao;
 
 import javafx.application.Application;
@@ -38,7 +39,7 @@ public class Main extends Application {
   static class GuiceModule extends AbstractModule {
     @Override
     protected void configure() {
-      bind(TodoneDao.class).toInstance(DummyDao.prePopulated());
+      bind(TodoneDao.class).toInstance(new FileBasedDao());
       bind(ZoneId.class).toInstance(ZoneId.systemDefault());
     }
   }

@@ -1,5 +1,6 @@
 package com.yuvalshavit.todone.ui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -81,7 +82,11 @@ public class MainSceneController implements Initializable {
     mainTop.addEventHandler(TagEvents.TAG_ENTER, this::handleTagEvent);
     mainTop.addEventHandler(TagEvents.TAG_EXIT, this::handleTagEvent);
 
-    dao.fetchAll().forEach(this::addAccomplishment);
+    try {
+      dao.fetchAll().forEach(this::addAccomplishment);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void handleTagEvent(TagEvents.TagEvent event) {

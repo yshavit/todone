@@ -40,6 +40,11 @@
       <artifactId>jfoenix</artifactId>
       <version>8.0.1</version>
     </dependency>
+    <dependency>
+      <groupId>net.harawata</groupId>
+      <artifactId>appdirs</artifactId>
+      <version>1.0.1</version>
+    </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>

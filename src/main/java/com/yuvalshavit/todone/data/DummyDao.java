@@ -26,7 +26,12 @@ public class DummyDao implements TodoneDao {
       "worked on another #support thing",
       "design meeting for #featureA",
       "groomed #spec for #featureA",
-      "had a #featureA pitching meeting");
+      "had a #featureA pitching meeting",
+      "finished #feature0",
+      "more progress on #feature0",
+      "proposal for #featureA",
+      "nearing completion on #feature0",
+      "work on #feature0");
     int minTimeMillis = Ints.checkedCast(TimeUnit.HOURS.toMillis(2));
     int maxTimeMillis = Ints.checkedCast(TimeUnit.HOURS.toMillis(36));
     for (String text : texts) {
