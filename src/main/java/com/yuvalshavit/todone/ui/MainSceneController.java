@@ -76,10 +76,7 @@ public class MainSceneController implements Initializable {
     tagsChartX.setLowerBound(todayEpoch - TAG_CHART_BUFFER);
     tagsChartX.setUpperBound(todayEpoch + TAG_CHART_BUFFER);
     tagsChartX.setTickLabelFormatter(EPOCH_DAY_TICK_FORMATTER);
-    tagsChartY.setTickUnit(2);
     tagsChartY.setForceZeroInRange(true);
-    tagsChartY.setLowerBound(0);
-    tagsChartY.setUpperBound(1);
 
     mainTop.addEventHandler(TagEvents.TAG_ENTER, this::handleTagEvent);
     mainTop.addEventHandler(TagEvents.TAG_EXIT, this::handleTagEvent);
