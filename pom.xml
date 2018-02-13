@@ -7,6 +7,29 @@
   <groupId>com.yuvalshavit</groupId>
   <artifactId>todone</artifactId>
   <version>1.0-SNAPSHOT</version>
+
+  <profiles>
+    <profile>
+      <id>jfoenix-8</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <jdk>1.8</jdk>
+      </activation>
+      <properties>
+        <jfoenix.version>8.0.2</jfoenix.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>jfoenix-9</id>
+      <activation>
+        <jdk>1.9</jdk>
+      </activation>
+      <properties>
+        <jfoenix.version>9.0.2</jfoenix.version>
+      </properties>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
