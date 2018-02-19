@@ -5,9 +5,11 @@ import java.util.function.ToLongFunction;
 
 import com.yuvalshavit.todone.data.Accomplishment;
 
+import javafx.beans.binding.DoubleBinding;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
@@ -27,7 +29,14 @@ public class AccomplishmentsGroupController implements Comparable<Accomplishment
       FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("accomplishment_group.fxml"));
       fxmlLoader.setController(this);
       top = fxmlLoader.load();
-      accomplishments.setCellFactory(AccomplishmentController.renderer);
+      DoubleBinding requiredWidth = accomplishments.widthProperty().subtract(2);
+      accomplishments.setCellFactory(ControllerUtil.rendererFor(t -> {
+        t.text.prefWidthProperty().bind(requiredWidth);
+        return t.top;
+      }, cell -> {
+        cell.prefWidthProperty().bind(requiredWidth);
+        cell.setMaxWidth(Control.USE_PREF_SIZE);
+      }));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

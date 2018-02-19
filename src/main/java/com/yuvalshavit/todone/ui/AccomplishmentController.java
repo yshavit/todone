@@ -5,8 +5,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Set;
-import java.util.TreeSet;
 
 import com.yuvalshavit.todone.data.Accomplishment;
 import com.yuvalshavit.todone.data.Tagger;
@@ -15,13 +13,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 public class AccomplishmentController {
-  public static final ControllerUtil.Renderer<AccomplishmentController> renderer = ControllerUtil.rendererFor(t -> t.top);
 
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT);
 
