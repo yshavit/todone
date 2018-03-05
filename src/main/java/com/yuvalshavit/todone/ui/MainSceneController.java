@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.ToLongFunction;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -24,33 +25,33 @@ import com.yuvalshavit.todone.data.TodoneDao;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ListView;
 import javafx.util.StringConverter;
 
 public class MainSceneController implements Initializable {
-  private static final int TAG_CHART_BUFFER = 1;
-  private static final StringConverter<Number> EPOCH_DAY_TICK_FORMATTER = new StringConverter<Number>() {
-    final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
+  private static final DateTimeFormatter ISO_DATE = DateTimeFormatter.ISO_DATE;
+  private static final StringConverter<Long> EPOCH_DAY_TICK_FORMATTER = new StringConverter<Long>() {
 
     @Override
-    public String toString(Number object) {
-      return formatter.format(LocalDate.ofEpochDay(object.longValue()));
+    public String toString(Long object) {
+      return ISO_DATE.format(LocalDate.ofEpochDay(object));
     }
 
     @Override
-    public Number fromString(String string) {
-      return LocalDate.from(formatter.parse(string)).toEpochDay();
+    public Long fromString(String string) {
+      return LocalDate.from(ISO_DATE.parse(string)).toEpochDay();
     }
   };
   private final LocalDate today = LocalDate.now();
 
   @FXML private ListView<AccomplishmentsGroupController> byDayList;
   @FXML private ListView<AccomplishmentsGroupController> byTagList;
-  @FXML private XYChart<Long,Integer> tagsChart;
-  @FXML private NumberAxis tagsChartX;
+  @FXML private StackedBarChart<String,Integer> tagsChart;
   @FXML private NumberAxis tagsChartY;
   @FXML private Parent mainTop;
   @Inject protected ZoneId zoneId;
@@ -61,7 +62,7 @@ public class MainSceneController implements Initializable {
   /**
    * Key is a tag. Series is epoch-day to count.
    */
-  private Map<String,XYChart.Series<Long,Integer>> chartByTag;
+  private Map<String,XYChart.Series<String,Integer>> chartByTag;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -71,11 +72,7 @@ public class MainSceneController implements Initializable {
     byTagList.setCellFactory(AccomplishmentsGroupController.renderer);
     byDayList.setCellFactory(AccomplishmentsGroupController.renderer);
 
-    long todayEpoch = today.toEpochDay();
-    tagsChartX.setAutoRanging(false);
-    tagsChartX.setLowerBound(todayEpoch - TAG_CHART_BUFFER);
-    tagsChartX.setUpperBound(todayEpoch + TAG_CHART_BUFFER);
-    tagsChartX.setTickLabelFormatter(EPOCH_DAY_TICK_FORMATTER);
+    tagsChart.setCategoryGap(0);
     tagsChartY.setForceZeroInRange(true);
 
     mainTop.addEventHandler(TagEvents.TAG_ENTER, this::handleTagEvent);
@@ -86,41 +83,24 @@ public class MainSceneController implements Initializable {
 
   private void handleTagEvent(TagEvents.TagEvent event) {
     final String chartAreaDimmedClass = "chart-dimmed";
-    final String chartLineHighlightedClass = "chart-highlighted-line";
     chartByTag.forEach((tag, series) -> {
-      ObservableList<String> fillStyles = series.getNode().lookup(".chart-series-area-fill").getStyleClass();
-      ObservableList<String> lineStyles = series.getNode().lookup(".chart-series-area-line").getStyleClass();
-      if (event.getEventType() == TagEvents.TAG_EXIT) {
-        fillStyles.remove(chartAreaDimmedClass);
-        lineStyles.remove(chartAreaDimmedClass);
-        lineStyles.remove(chartLineHighlightedClass);
-      } else if (Objects.equals(tag, event.tag)) {
-        fillStyles.remove(chartAreaDimmedClass);
-        lineStyles.remove(chartAreaDimmedClass);
-        lineStyles.add(chartLineHighlightedClass);
-      } else {
-        fillStyles.add(chartAreaDimmedClass);
-        lineStyles.add(chartAreaDimmedClass);
-        lineStyles.remove(chartLineHighlightedClass);
+      for (XYChart.Data<String, Integer> data : series.getData()) {
+        Node node = data.getNode();
+        ObservableList<String> fillStyles = node.getStyleClass();
+        if (event.getEventType() == TagEvents.TAG_EXIT) {
+          fillStyles.remove(chartAreaDimmedClass);
+        } else if (Objects.equals(tag, event.tag)) {
+          fillStyles.remove(chartAreaDimmedClass);
+        } else {
+          fillStyles.add(chartAreaDimmedClass);
+        }
       }
     });
   }
 
-  private void setChartRange(long epochDay) {
-    double newRangeLower = epochDay - TAG_CHART_BUFFER;
-    double newRangeUpper = epochDay + TAG_CHART_BUFFER;
-
-    if (tagsChartX.getLowerBound() < newRangeLower) {
-      tagsChartX.setLowerBound(newRangeLower);
-    }
-    if (tagsChartX.getUpperBound() > newRangeUpper) {
-      tagsChartX.setUpperBound(newRangeUpper);
-    }
-  }
-
   public void addAccomplishment(Accomplishment accomplishment) {
     LocalDate accomplishmentDate = Instant.ofEpochMilli(accomplishment.getTimestamp()).atZone(zoneId).toLocalDate();
-    long accomplishmentEpochDay = accomplishmentDate.toEpochDay();
+    String accomplishmentEpochDay = ISO_DATE.format(accomplishmentDate);
     // Add to the by-day list
     AccomplishmentsGroupController groupForDay = groupsByDay.get(accomplishmentDate);
     if (groupForDay == null) {
@@ -140,17 +120,17 @@ public class MainSceneController implements Initializable {
       }
       groupForTag.addAccomplishment(accomplishment);
       // add a blip to the chart
-      final XYChart.Data<Long, Integer> dataPoint;
-      XYChart.Series<Long, Integer> series = chartByTag.get(tag);
+      final XYChart.Data<String, Integer> dataPoint;
+      XYChart.Series<String, Integer> series = chartByTag.get(tag);
       if (series == null) {
         series = new XYChart.Series<>();
         series.setName(tag);
         chartByTag.put(tag, series);
         tagsChart.getData().add(series);
       }
-      ObservableList<XYChart.Data<Long, Integer>> seriesData = series.getData();
-      List<Long> seriesDataEpochDay = Lists.transform(seriesData, XYChart.Data::getXValue);
-      int searchResult = Collections.binarySearch(seriesDataEpochDay, accomplishmentEpochDay);
+      ObservableList<XYChart.Data<String, Integer>> seriesData = series.getData();
+      List<String> seriesDataEpochDay = Lists.transform(seriesData, XYChart.Data::getXValue);
+      int searchResult = binarySearchForEpochDay(seriesDataEpochDay, accomplishmentEpochDay);
       if (searchResult >= 0) {
         dataPoint = seriesData.get(searchResult);
       } else {
@@ -171,12 +151,17 @@ public class MainSceneController implements Initializable {
     }
 
     // set the chart range and sort the lists
-    setChartRange(accomplishmentEpochDay);
     Collections.sort(byDayList.getItems());
     Collections.sort(byTagList.getItems());
   }
 
-  private XYChart.Data<Long, Integer> createTagPoint(long epochDay) {
+  private int binarySearchForEpochDay(List<String> epochDays, String searchDay) {
+    long searchNumber = EPOCH_DAY_TICK_FORMATTER.fromString(searchDay);
+    List<Long> searchNumbers = epochDays.stream().map(EPOCH_DAY_TICK_FORMATTER::fromString).collect(Collectors.toList());
+    return Collections.binarySearch(searchNumbers, searchNumber);
+  }
+
+  private XYChart.Data<String, Integer> createTagPoint(String epochDay) {
     // Set up the hover labels when you mouseover a point
     // Label hoverLabel = new Label("");
     // StackPane hoverPane = new StackPane();

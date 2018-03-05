@@ -4,10 +4,11 @@
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.StackedAreaChart?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.chart.StackedBarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
 <SplitPane fx:id="mainTop" dividerPositions="0.75" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yuvalshavit.todone.ui.MainSceneController">
   <fx:define>
     <Double fx:id="LIST_WIDTH" fx:value="345"/>
@@ -23,13 +24,13 @@
    </JFXTabPane>
   </AnchorPane>
   <AnchorPane minHeight="0.0" minWidth="0.0">
-    <StackedAreaChart fx:id="tagsChart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <StackedBarChart fx:id="tagsChart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <xAxis>
-        <NumberAxis fx:id="tagsChartX" />
+        <CategoryAxis fx:id="tagsChartX" side="BOTTOM"/>
       </xAxis>
       <yAxis>
         <NumberAxis fx:id="tagsChartY" />
       </yAxis>
-    </StackedAreaChart>
+    </StackedBarChart>
   </AnchorPane>
 </SplitPane>
