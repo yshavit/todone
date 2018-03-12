@@ -9,6 +9,7 @@ import java.time.format.FormatStyle;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -148,7 +149,28 @@ public class MainSceneController implements Initializable {
     Collections.sort(byDayList.getItems());
     Collections.sort(byTagList.getItems());
 
-    tagsChartX.setCategories(tagsChartX.getCategories()); // force a refresh of the categories order
+    updateChartCategories(EPOCH_DAY_FORMATTER::fromString, EPOCH_DAY_FORMATTER::toString);
+  }
+
+  private void updateChartCategories(ToLongFunction<String> toDays, LongFunction<String> fromDays) {
+    ObservableList<String> categories = tagsChartX.getCategories();
+    if (!categories.isEmpty()) {
+      ListIterator<String> categoriesIter = categories.listIterator();
+      long previousDay = toDays.applyAsLong(categoriesIter.next());
+      while (categoriesIter.hasNext()) {
+        long currentDay = toDays.applyAsLong(categoriesIter.next());
+        if (currentDay > previousDay + 1) {
+          // Go back one, add the days we need, then fast-forward (so that we don't see this same day again)
+          categoriesIter.previous();
+          for (long day = previousDay + 1; day < currentDay; ++day) {
+            categoriesIter.add(fromDays.apply(day));
+          }
+          categoriesIter.next();
+        }
+        previousDay = currentDay;
+      }
+    }
+    tagsChartX.setCategories(categories); // forces a refresh of the categories order
   }
 
   private static <T> T insertToListSortedByEpochDays(List<T> list, long epochDay, ToLongFunction<T> toDays, LongFunction<T> fromDays) {
