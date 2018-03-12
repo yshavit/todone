@@ -37,7 +37,7 @@ import javafx.scene.control.ListView;
 
 public class MainSceneController implements Initializable {
   private final LocalDate today = LocalDate.now();
-  private final Aggregator aggregator = Aggregator.byDay;
+  private final Aggregator aggregator = Aggregator.byWeek;
 
   @FXML private ListView<AccomplishmentsGroupController> byDayList;
   @FXML private ListView<AccomplishmentsGroupController> byTagList;
@@ -146,11 +146,12 @@ public class MainSceneController implements Initializable {
       ListIterator<String> categoriesIter = categories.listIterator();
       long previousDay = toDays.applyAsLong(categoriesIter.next());
       while (categoriesIter.hasNext()) {
+        long expectedNextDay = previousDay + 1;
         long currentDay = toDays.applyAsLong(categoriesIter.next());
-        if (currentDay > previousDay + 1) {
+        if (currentDay > expectedNextDay) {
           // Go back one, add the days we need, then fast-forward (so that we don't see this same day again)
           categoriesIter.previous();
-          for (long day = previousDay + 1; day < currentDay; ++day) {
+          for (long day = expectedNextDay; day < currentDay; ++day) {
             categoriesIter.add(fromDays.apply(day));
           }
           categoriesIter.next();
@@ -194,7 +195,7 @@ public class MainSceneController implements Initializable {
     long epochDay = aggregator.toLong(date);
     if (date.equals(today)) {
       header = "Today";
-    } else if (date.equals(today.minusDays(1))) {
+    } else if (aggregator.toLong(today) - aggregator.toLong(date) == 1) {
       header = aggregator.oneUnitAgo();
     } else {
       long daysAgo = aggregator.toLong(today) - epochDay;

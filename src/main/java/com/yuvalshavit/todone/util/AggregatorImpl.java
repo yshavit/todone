@@ -1,10 +1,14 @@
 package com.yuvalshavit.todone.util;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.function.LongFunction;
 import java.util.function.ToLongFunction;
 
 class AggregatorImpl implements Aggregator {
+
+  public static LocalDate mondayBeforeEpoch = LocalDate.ofEpochDay(0).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
   private final ToLongFunction<String> toDays;
   private final LongFunction<String> fromDays;
