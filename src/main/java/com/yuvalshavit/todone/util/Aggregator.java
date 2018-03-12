@@ -15,6 +15,7 @@ public interface Aggregator {
     LocalDate::toEpochDay,
     string -> LocalDate.from(DateTimeFormatter.ISO_DATE.parse(string)).toEpochDay(),
     day -> DateTimeFormatter.ISO_DATE.format(LocalDate.ofEpochDay(day)),
+    "Today",
     "Yesterday"
   );
 
@@ -23,12 +24,14 @@ public interface Aggregator {
     date -> ChronoUnit.WEEKS.between(AggregatorImpl.mondayBeforeEpoch, date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))),
     string -> ChronoUnit.WEEKS.between(AggregatorImpl.mondayBeforeEpoch, LocalDate.from(DateTimeFormatter.ISO_DATE.parse(string))),
     day -> DateTimeFormatter.ISO_DATE.format(AggregatorImpl.mondayBeforeEpoch.plusWeeks(day)),
+    "This week",
     "Last week"
   );
 
   ToLongFunction<String> toDays();
   LongFunction<String> fromDays();
   long toLong(LocalDate date);
+  String thisUnit();
   String oneUnitAgo();
   String unitNamePlural();
 }

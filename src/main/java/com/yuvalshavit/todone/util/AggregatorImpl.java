@@ -15,17 +15,20 @@ class AggregatorImpl implements Aggregator {
   private final ToLongFunction<LocalDate> datePruner;
   private final String oneUnitAgo;
   private final String unitNamePlural;
+  private final String thisUnit;
 
   public AggregatorImpl(
     String unitNamePlural,
     ToLongFunction<LocalDate> datePruner,
     ToLongFunction<String> toDays,
     LongFunction<String> fromDays,
+    String thisUnit,
     String oneUnitAgo)
   {
     this.toDays = toDays;
     this.fromDays = fromDays;
     this.datePruner = datePruner;
+    this.thisUnit = thisUnit;
     this.oneUnitAgo = oneUnitAgo;
     this.unitNamePlural = unitNamePlural;
   }
@@ -40,6 +43,11 @@ class AggregatorImpl implements Aggregator {
 
   public long toLong(LocalDate date) {
     return datePruner.applyAsLong(date);
+  }
+
+  @Override
+  public String thisUnit() {
+    return thisUnit;
   }
 
   public String oneUnitAgo() {

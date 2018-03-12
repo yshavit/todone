@@ -36,8 +36,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.ListView;
 
 public class MainSceneController implements Initializable {
-  private final LocalDate today = LocalDate.now();
   private final Aggregator aggregator = Aggregator.byWeek;
+  private final LocalDate today = LocalDate.now();
 
   @FXML private ListView<AccomplishmentsGroupController> byDayList;
   @FXML private ListView<AccomplishmentsGroupController> byTagList;
@@ -48,7 +48,7 @@ public class MainSceneController implements Initializable {
   @Inject protected ZoneId zoneId;
   @Inject protected TodoneDao dao;
 
-  private Map<LocalDate,AccomplishmentsGroupController> groupsByDay;
+  private Map<Long,AccomplishmentsGroupController> groupsByDay;
   private Map<String,AccomplishmentsGroupController> groupsByTag;
   /**
    * Key is a tag. Series is epoch-day to count.
@@ -93,10 +93,10 @@ public class MainSceneController implements Initializable {
     LocalDate accomplishmentDate = Instant.ofEpochMilli(accomplishment.getTimestamp()).atZone(zoneId).toLocalDate();
     long accomplishmentEpochDay = aggregator.toLong(accomplishmentDate);
     // Add to the by-day list
-    AccomplishmentsGroupController groupForDay = groupsByDay.get(accomplishmentDate);
+    AccomplishmentsGroupController groupForDay = groupsByDay.get(accomplishmentEpochDay);
     if (groupForDay == null) {
       groupForDay = createGroupForDay(accomplishmentDate);
-      groupsByDay.put(accomplishmentDate, groupForDay);
+      groupsByDay.put(accomplishmentEpochDay, groupForDay);
       byDayList.getItems().add(groupForDay);
     }
     groupForDay.addAccomplishment(accomplishment);
@@ -191,14 +191,14 @@ public class MainSceneController implements Initializable {
   }
 
   private AccomplishmentsGroupController createGroupForDay(LocalDate date) {
-    final String header;
     long epochDay = aggregator.toLong(date);
-    if (date.equals(today)) {
-      header = "Today";
-    } else if (aggregator.toLong(today) - aggregator.toLong(date) == 1) {
+    long daysAgo = aggregator.toLong(today) - epochDay;
+    final String header;
+    if (daysAgo == 0) {
+      header = aggregator.thisUnit();
+    } else if (daysAgo == 1) {
       header = aggregator.oneUnitAgo();
     } else {
-      long daysAgo = aggregator.toLong(today) - epochDay;
       header = String.format("%s (%d %s ago)", DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(date), daysAgo, aggregator.unitNamePlural());
     }
     return createAccomplishmentGroup(header, ignored -> epochDay);
