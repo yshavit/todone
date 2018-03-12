@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import com.yuvalshavit.todone.data.Accomplishment;
 import com.yuvalshavit.todone.data.Tagger;
 import com.yuvalshavit.todone.data.TodoneDao;
+import com.yuvalshavit.todone.util.Aggregator;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -33,23 +34,10 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ListView;
-import javafx.util.StringConverter;
 
 public class MainSceneController implements Initializable {
-  private static final StringConverter<Long> EPOCH_DAY_FORMATTER = new StringConverter<Long>() {
-    private final DateTimeFormatter ISO_DATE = DateTimeFormatter.ISO_DATE;
-
-    @Override
-    public String toString(Long object) {
-      return ISO_DATE.format(LocalDate.ofEpochDay(object));
-    }
-
-    @Override
-    public Long fromString(String string) {
-      return LocalDate.from(ISO_DATE.parse(string)).toEpochDay();
-    }
-  };
   private final LocalDate today = LocalDate.now();
+  private final Aggregator aggregator = Aggregator.instance;
 
   @FXML private ListView<AccomplishmentsGroupController> byDayList;
   @FXML private ListView<AccomplishmentsGroupController> byTagList;
@@ -103,7 +91,7 @@ public class MainSceneController implements Initializable {
 
   public void addAccomplishment(Accomplishment accomplishment) {
     LocalDate accomplishmentDate = Instant.ofEpochMilli(accomplishment.getTimestamp()).atZone(zoneId).toLocalDate();
-    long accomplishmentEpochDay = accomplishmentDate.toEpochDay();
+    long accomplishmentEpochDay = aggregator.toLong(accomplishmentDate);
     // Add to the by-day list
     AccomplishmentsGroupController groupForDay = groupsByDay.get(accomplishmentDate);
     if (groupForDay == null) {
@@ -134,22 +122,22 @@ public class MainSceneController implements Initializable {
       XYChart.Data<String, Integer> dataPoint = insertToListSortedByEpochDays(
         seriesData,
         accomplishmentEpochDay,
-        data -> EPOCH_DAY_FORMATTER.fromString(data.getXValue()),
-        day -> createTagPoint(EPOCH_DAY_FORMATTER.toString(day)));
+        data -> aggregator.toDays().applyAsLong(data.getXValue()),
+        day -> createTagPoint(aggregator.fromDays().apply(day)));
       int newY = 1 + dataPoint.getYValue();
       double newChartHeight = newY + 1.5;
       dataPoint.setYValue(newY);
       if (newChartHeight > tagsChartY.getUpperBound()) {
         tagsChartY.setUpperBound(newChartHeight);
       }
-      insertToListSortedByEpochDays(tagsChartX.getCategories(), accomplishmentEpochDay, EPOCH_DAY_FORMATTER::fromString, EPOCH_DAY_FORMATTER::toString);
+      insertToListSortedByEpochDays(tagsChartX.getCategories(), accomplishmentEpochDay, aggregator.toDays(), aggregator.fromDays());
     }
 
     // set the chart range and sort the lists
     Collections.sort(byDayList.getItems());
     Collections.sort(byTagList.getItems());
 
-    updateChartCategories(EPOCH_DAY_FORMATTER::fromString, EPOCH_DAY_FORMATTER::toString);
+    updateChartCategories(aggregator.toDays(), aggregator.fromDays());
   }
 
   private void updateChartCategories(ToLongFunction<String> toDays, LongFunction<String> fromDays) {
@@ -203,14 +191,14 @@ public class MainSceneController implements Initializable {
 
   private AccomplishmentsGroupController createGroupForDay(LocalDate date) {
     final String header;
-    long epochDay = date.toEpochDay();
+    long epochDay = aggregator.toLong(date);
     if (date.equals(today)) {
       header = "Today";
     } else if (date.equals(today.minusDays(1))) {
-      header = "Yesterday";
+      header = aggregator.oneUnitAgo();
     } else {
-      long daysAgo = today.toEpochDay() - epochDay;
-      header = String.format("%s (%d days ago)", DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(date), daysAgo);
+      long daysAgo = aggregator.toLong(today) - epochDay;
+      header = String.format("%s (%d %s ago)", DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(date), daysAgo, aggregator.unitNamePlural());
     }
     return createAccomplishmentGroup(header, ignored -> epochDay);
   }
