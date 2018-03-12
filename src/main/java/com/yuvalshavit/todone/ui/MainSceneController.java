@@ -37,7 +37,7 @@ import javafx.scene.control.ListView;
 
 public class MainSceneController implements Initializable {
   private final LocalDate today = LocalDate.now();
-  private final Aggregator aggregator = Aggregator.instance;
+  private final Aggregator aggregator = Aggregator.byDay;
 
   @FXML private ListView<AccomplishmentsGroupController> byDayList;
   @FXML private ListView<AccomplishmentsGroupController> byTagList;

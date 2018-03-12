@@ -5,43 +5,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.function.LongFunction;
 import java.util.function.ToLongFunction;
 
-import javafx.util.StringConverter;
+public interface Aggregator {
 
-public class Aggregator {
+  Aggregator byDay = new AggregatorImpl(
+    "days",
+    LocalDate::toEpochDay,
+    string -> LocalDate.from(DateTimeFormatter.ISO_DATE.parse(string)).toEpochDay(),
+    day -> DateTimeFormatter.ISO_DATE.format(LocalDate.ofEpochDay(day)),
+    "Yesterday");
 
-  public static Aggregator instance = new Aggregator();
-
-  private static final StringConverter<Long> EPOCH_DAY_FORMATTER = new StringConverter<Long>() {
-    private final DateTimeFormatter ISO_DATE = DateTimeFormatter.ISO_DATE;
-
-    @Override
-    public String toString(Long object) {
-      return ISO_DATE.format(LocalDate.ofEpochDay(object));
-    }
-
-    @Override
-    public Long fromString(String string) {
-      return LocalDate.from(ISO_DATE.parse(string)).toEpochDay();
-    }
-  };
-
-  public ToLongFunction<String> toDays() {
-    return EPOCH_DAY_FORMATTER::fromString;
-  }
-
-  public LongFunction<String> fromDays() {
-    return EPOCH_DAY_FORMATTER::toString;
-  }
-
-  public long toLong(LocalDate date) {
-    return date.toEpochDay();
-  }
-
-  public String oneUnitAgo() {
-    return "Yesterday";
-  }
-
-  public String unitNamePlural() {
-    return "days";
-  }
+  ToLongFunction<String> toDays();
+  LongFunction<String> fromDays();
+  long toLong(LocalDate date);
+  String oneUnitAgo();
+  String unitNamePlural();
 }
