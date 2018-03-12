@@ -14,7 +14,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Main extends Application {
 
@@ -23,10 +25,22 @@ public class Main extends Application {
   public void start(Stage primaryStage) throws Exception {
     GuiceContext context = new GuiceContext(this, () -> Collections.singletonList(new GuiceModule()));
     context.init();
-    fxmlLoader.setLocation(getClass().getResource("main_scene.fxml"));
-    Parent root = fxmlLoader.load();
-    primaryStage.setTitle("ToDone");
-    primaryStage.setScene(new Scene(root, 600, 700));
+
+    Parent root;
+    if (this.getParameters().getRaw().contains("--add_window")) {
+      fxmlLoader.setLocation(getClass().getResource("add_accomplishment.fxml"));
+      root = fxmlLoader.load();
+      primaryStage.setTitle("Add Accomplishment");
+      primaryStage.setScene(new Scene(root));
+
+      primaryStage.setY(0);
+      primaryStage.setOnShown(event -> primaryStage.setX(Screen.getPrimary().getVisualBounds().getWidth() - primaryStage.getWidth()));
+    } else {
+      fxmlLoader.setLocation(getClass().getResource("main_scene.fxml"));
+      root = fxmlLoader.load();
+      primaryStage.setTitle("ToDone");
+      primaryStage.setScene(new Scene(root, 600, 700));
+    }
     root.getStylesheets().add(getClass().getResource("main.css").toExternalForm());
     primaryStage.show();
   }

@@ -7,8 +7,7 @@ public interface TodoneDao {
   Iterable<Accomplishment> fetchAll();
 
   default Iterable<String> tags() {
-    Iterable<Accomplishment> iterable = fetchAll();
-    return () -> StreamSupport.stream(iterable.spliterator(), false)
+    return () -> StreamSupport.stream(fetchAll().spliterator(), false)
       .flatMap(a -> Tagger.tagsFor(a.getText()).stream())
       .iterator();
   }
