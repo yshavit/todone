@@ -9,6 +9,6 @@
       <JFXTextField fx:id="accomplishmentText" prefWidth="450.0" promptText="What have you accomplished?" BorderPane.alignment="CENTER" />
    </center>
    <right>
-      <JFXButton fx:id="submitButton" defaultButton="true" ripplerFill="#00f218" text="Add" BorderPane.alignment="CENTER" />
+      <JFXButton fx:id="submitButton" defaultButton="true" ripplerFill="#0b4df2" text="Add" BorderPane.alignment="CENTER" />
    </right>
 </BorderPane>

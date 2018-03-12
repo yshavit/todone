@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import javax.inject.Inject;
 
+import com.yuvalshavit.todone.data.Accomplishment;
 import com.yuvalshavit.todone.data.TodoneDao;
 
 import javafx.fxml.FXML;
@@ -28,16 +29,20 @@ public class AddAccomplishmentController implements Initializable {
     submitButton.setOnAction(event -> submit());
     accomplishmentText.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
       if (event.getCode() == KeyCode.ESCAPE) {
-        cancel();
+        closeWindow();
       }
     });
   }
 
   public void submit() {
-    System.out.println(accomplishmentText.getText());
+    String text = accomplishmentText.getText().trim();
+    if (!text.isEmpty()) {
+      dao.add(new Accomplishment(System.currentTimeMillis(), text));
+      closeWindow();
+    }
   }
 
-  public void cancel() {
+  public void closeWindow() {
     Stage stage = (Stage) accomplishmentText.getScene().getWindow();
     stage.close();
   }
