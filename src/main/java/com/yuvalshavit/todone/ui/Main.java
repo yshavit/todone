@@ -34,6 +34,7 @@ public class Main extends Application {
       primaryStage.setScene(new Scene(root));
 
       primaryStage.setY(0);
+      primaryStage.setAlwaysOnTop(true);
       primaryStage.setOnShown(event -> primaryStage.setX(Screen.getPrimary().getVisualBounds().getWidth() - primaryStage.getWidth()));
     } else {
       fxmlLoader.setLocation(getClass().getResource("main_scene.fxml"));
